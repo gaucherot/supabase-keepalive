@@ -14,7 +14,6 @@ jobs:
         run: |
           curl --fail --silent --show-error \
             -H "apikey: ${{ secrets.SUPABASE_KEY }}" \
-            -H "Authorization: Bearer ${{ secrets.SUPABASE_KEY }}" \
             "${{ secrets.SUPABASE_URL }}/rest/v1/" \
             -o /dev/null \
             -w "REST status: %{http_code}\n"
@@ -22,5 +21,6 @@ jobs:
       - name: Ping Auth health
         run: |
           curl --fail --silent --show-error \
+            -H "apikey: ${{ secrets.SUPABASE_KEY }}" \
             "${{ secrets.SUPABASE_URL }}/auth/v1/health" \
             -w "\nAuth status: %{http_code}\n"
