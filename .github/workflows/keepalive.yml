@@ -1,0 +1,26 @@
+name: Supabase Keepalive
+
+on:
+  schedule:
+    # Toutes les 48h a 12:00 UTC (marge confortable avant le seuil de 7 jours)
+    - cron: '0 12 */2 * *'
+  workflow_dispatch: # permet de declencher manuellement depuis l'onglet Actions
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping REST API (PostgREST -> declenche activite DB)
+        run: |
+          curl --fail --silent --show-error \
+            -H "apikey: ${{ secrets.SUPABASE_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_KEY }}" \
+            "${{ secrets.SUPABASE_URL }}/rest/v1/" \
+            -o /dev/null \
+            -w "REST status: %{http_code}\n"
+
+      - name: Ping Auth health
+        run: |
+          curl --fail --silent --show-error \
+            "${{ secrets.SUPABASE_URL }}/auth/v1/health" \
+            -w "\nAuth status: %{http_code}\n"
